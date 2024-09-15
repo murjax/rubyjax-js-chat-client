@@ -1,25 +1,46 @@
-import logo from './logo.svg';
+import Home from './components/Home';
+import ErrorPage from './components/ErrorPage';
+import ChannelNew from './components/ChannelNew';
+import ChannelShow from './components/ChannelShow';
+import ChannelIndex from './components/ChannelIndex';
+import Navigation from './components/Navigation';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import './App.css';
 
 function App() {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Home />,
+      errorElement: <ErrorPage />,
+      children: [
+        {
+          path: "/channels",
+          element: <ChannelIndex />,
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: "/channels/new",
+          element: <ChannelNew />,
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: "/channels/:id",
+          element: <ChannelShow />,
+          errorElement: <ErrorPage />,
+        }
+      ]
+    },
+  ]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <RouterProvider router={router}>
+        <Navigation />
+      </RouterProvider>
     </div>
   );
 }
 
 export default App;
+
