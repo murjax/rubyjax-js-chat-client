@@ -34,6 +34,11 @@ function ChannelIndex(props) {
             </th>
             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
               <p className="block text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                Channel Name
+              </p>
+            </th>
+            <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+              <p className="block text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                 Users Active
               </p>
             </th>
@@ -50,6 +55,11 @@ function ChannelIndex(props) {
               <td className="p-4 border-b border-blue-gray-50">
                 <p className="block text-sm antialiased font-normal leading-normal text-blue-gray-900">
                   {channel.id}
+                </p>
+              </td>
+              <td className="p-4 border-b border-blue-gray-50">
+                <p className="block text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                  {channel.channel_name}
                 </p>
               </td>
               <td className="p-4 border-b border-blue-gray-50">

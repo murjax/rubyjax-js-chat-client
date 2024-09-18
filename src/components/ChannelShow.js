@@ -1,15 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 function ChannelShow(props) {
   const [name, setName] = useState('');
+  const [channelName, setChannelName] = useState('');
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
   const inputRef = useRef(null);
   const messageBox = useRef(null);
 
   const params = useParams();
+  let [searchParams] = useSearchParams();
 
   useEffect(() => {
     if (!name) {
@@ -21,18 +23,29 @@ function ChannelShow(props) {
       getName();
     }
 
+    if (!channelName) {
+      setChannelName(decodeURIComponent(searchParams.get('channel_name')));
+    }
+
     if (!socket) {
       const socket = new WebSocket("ws://localhost:3001");
 
       socket.addEventListener('open', (event) => {
-        const subscribeMessage = JSON.stringify({ requestType: 'subscribe', id: params.id });
+        const subscribeMessage = JSON.stringify({ requestType: 'subscribe', id: params.id, channel_name: searchParams.get('channel_name')});
         socket.send(subscribeMessage);
       });
 
       socket.addEventListener('message', async (event) => {
         const textData = await event.data.text();
         const data = JSON.parse(textData);
-        setMessages(messages => [...messages, { id: data.id, sender: data.sender, message: data.message, sentAt: data.sentAt }]);
+        console.log(data.requestType);
+        if (data.requestType === 'chatMessage') {
+          setMessages(messages => [...messages, { id: data.id, sender: data.sender, message: data.message, sentAt: data.sentAt }]);
+        } else if (data.requestType === 'subscriptionConfirmation') {
+          if (!channelName) {
+            setChannelName(data.channel_name);
+          }
+        }
       });
 
       setSocket(socket);
@@ -41,7 +54,7 @@ function ChannelShow(props) {
     if (messageBox.current) {
       messageBox.current.scrollTo(0, messageBox.current.scrollHeight);
     }
-  }, [messages, name, socket, params.id]);
+  }, [messages, name, channelName, socket, params.id, searchParams]);
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -107,7 +120,7 @@ function ChannelShow(props) {
 
   return (
     <div className="flex flex-col items-center relative md:rounded-md bg-white mb-10 p-2">
-      <h2 className="text-2xl">Show Channel</h2>
+      <h2 className="text-2xl">{channelName}</h2>
 
       <div className="flex flex-col items-center justify-center w-screen min-h-screen bg-gray-100 text-gray-800 p-10">
         <div className="flex flex-col flex-grow w-full max-w-xl bg-white shadow-xl rounded-lg overflow-hidden">

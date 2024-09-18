@@ -7,7 +7,8 @@ function ChannelNew(props) {
 
   useEffect(() => {
     const channelId = uuidv4();
-    navigate(`/channels/${channelId}`);
+    const channelName = prompt('Enter a channel name');
+    navigate(`/channels/${channelId}?channel_name=${encodeURIComponent(channelName)}`);
   }, [navigate]);
 
   return (
